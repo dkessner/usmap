@@ -7,6 +7,7 @@ let election_data_2016 = {
     'Colorado' : [1338870,1202484],
     'Connecticut' : [897572,673215],
     'Delaware' : [235603,185127],
+    'District of Columbia' : [282830,12723],
     'Florida' : [4504975,4617886],
     'Georgia' : [1877963,2089104],
     'Hawaii' : [266891,128847],

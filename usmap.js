@@ -4,16 +4,42 @@
 
 
 let show_state_names = false;
+let show_election_colors = false;
 
 
 let state_colors = {}
 let state_centers = {}
 
 
+let state_colors_election = {}
+
+
 function initialize_state_colors() {
     for (const state in state_data) {
         let c = color(random(360), 20, 100);
         state_colors[state] = c;
+    }
+}
+
+
+function initialize_state_colors_election() {
+
+    for (const state in election_data_2016) {
+        let clinton = election_data_2016[state][0];
+        let trump = election_data_2016[state][1];
+        let total = clinton + trump;
+
+        let hue, value;
+
+        if (clinton > trump) {
+            hue = 210;
+            value = map(int(clinton/total * 100), 50, 60, 60, 100);
+        } else {
+            hue = 0;
+            value = map(int(trump/total * 100), 50, 60, 60, 100);
+        }
+
+        state_colors_election[state] = color(hue, 100, value); 
     }
 }
 
@@ -40,6 +66,7 @@ function setup() {
     colorMode(HSB, 360, 100, 100);
     initialize_state_colors();
     initialize_state_centers();
+    initialize_state_colors_election();
 }
 
 
@@ -98,6 +125,20 @@ function find_closest_state(x, y) {
 }
 
 
+
+function get_color(state) {
+    if (show_election_colors) {
+        if (state in state_colors_election) {
+            return state_colors_election[state];
+        }
+    } else {
+        return state_colors[state];
+    }
+
+    return color(0, 0, 50);
+}
+
+
 function draw() {
 
     background(0, 0, 75);
@@ -105,7 +146,7 @@ function draw() {
 
     for (let state in state_data) {
         stroke(0);
-        fill(state_colors[state]);
+        fill(get_color(state));
         draw_state(state);
     }
 
@@ -122,6 +163,9 @@ function draw() {
 function keyPressed() {
     if (key == 'n') {
         show_state_names = !show_state_names;
+    }
+    if (key == 'c') {
+        show_election_colors =!show_election_colors;
     }
 }
 
