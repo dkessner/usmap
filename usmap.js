@@ -162,8 +162,7 @@ function draw() {
     let y = height*.8;
     textAlign(LEFT);
     text("n: state names", 25, y+=25);
-    text("c: election colors", 25, y+=25);
-
+    text("c: election 2016 colors", 25, y+=25);
 }
 
 
