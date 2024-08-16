@@ -21,28 +21,27 @@ root = doc.getroot()
 #for place in root.Document.Folder.Placemark:
 #    print(place.name)
 
-places = []
+states = []
 
 for placemark in root.Document.Folder.Placemark:
     #print(place.name)
     data_raw = {item.get("name"):item.text for item in
                 placemark.ExtendedData.SchemaData.SimpleData}
 
+    #print(data_raw["NAME"])
 
-    # hack: Alaska has Placemark/MultiGeometry/Polygon
     if "MultiGeometry" in dir(placemark):
-        coords = placemark.MultiGeometry.Polygon.outerBoundaryIs[-1].LinearRing.coordinates.text.strip()
+        coords_list = [polygon.outerBoundaryIs.LinearRing.coordinates.text.strip() \
+                       for polygon in placemark.MultiGeometry.Polygon]
     else:
-        coords = placemark.Polygon.outerBoundaryIs[-1].LinearRing.coordinates.text.strip()
+        coords_list = [placemark.Polygon.outerBoundaryIs.LinearRing.coordinates.text.strip()]
 
-
-    data = { 
+    state = { 
         "name" : data_raw["NAME"], 
-        "coordinates" : coords
+        "coordinates" : coords_list
     }
-    #print(data)
 
-    places.append(data)
+    states.append(state)
 
 
 
@@ -52,16 +51,26 @@ def vector_str_to_list(s):
     return result
 
 
+# write Javascript object
+#    state_name -> list of polygons
+#    polygon = list of points [x,y,z]
+#    point = list of 3 numbers
+#
+# {
+# ...
+# 'California' : [ [[1,2,0], [3,4,0]], [ ... ] ]
+# ...
+# }
+
 
 print("let state_data = {")
 
-
-for place in places:
-    print("     \'" + place['name'] + "\' : ", end='')
-    points_text = place['coordinates'].split()
-    points_ints = [vector_str_to_list(s) for s in points_text]
-    print(points_ints, ',')
-
+for state in states:
+    print("     \'" + state['name'] + "\' : ", end='')
+    points_list_text = [s.split() for s in state['coordinates']]
+    #print(points_list_text)
+    points_floats_list = [[vector_str_to_list(s) for s in point_text] for point_text in points_list_text]
+    print(points_floats_list, ',')
 
 print("};")
 
