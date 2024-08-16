@@ -3,7 +3,11 @@
 //
 
 
+let show_state_names = false;
+
+
 let state_colors = {}
+let state_centers = {}
 
 
 function initialize_state_colors() {
@@ -15,13 +19,32 @@ function initialize_state_colors() {
 }
 
 
+function initialize_state_centers() {
+    for (const state in state_data) {
+        let sum_x = 0;
+        let sum_y = 0;
+        let count = 0;
+        for (const polygon of state_data[state]) {
+            for (const point of polygon) {
+                sum_x += point[0];
+                sum_y += point[1];
+                count++;
+            }
+        }
+        state_centers[state] = [sum_x/count, sum_y/count];
+    }
+}
+
+
 function setup() {
-    createCanvas(800, 400);
+    createCanvas(900, 500);
     initialize_state_colors();
+    initialize_state_centers();
 }
 
 
 function transform_coordinates(p) {
+    // map latitude/longitude to rect(0, 0, width, height)
     const x1 = -127;
     const x2 = -66;
     const y1 = 25;
@@ -43,6 +66,13 @@ function draw_state(name) {
         }
         endShape();
     }
+
+    if (show_state_names) {
+        fill(0);
+        let position = transform_coordinates(state_centers[name]);
+        textAlign(CENTER);
+        text(name, position[0], position[1]);
+    }
 }
 
 
@@ -55,6 +85,13 @@ function draw() {
         stroke(0);
         fill(state_colors[state]);
         draw_state(state);
+    }
+}
+
+
+function keyPressed() {
+    if (key == 'n') {
+        show_state_names = !show_state_names;
     }
 }
 
