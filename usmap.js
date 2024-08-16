@@ -12,7 +12,6 @@ let state_centers = {}
 
 function initialize_state_colors() {
     for (const state in state_data) {
-        colorMode(HSB, 360, 100, 100);
         let c = color(random(360), 20, 100);
         state_colors[state] = c;
     }
@@ -38,6 +37,7 @@ function initialize_state_centers() {
 
 function setup() {
     createCanvas(900, 500);
+    colorMode(HSB, 360, 100, 100);
     initialize_state_colors();
     initialize_state_centers();
 }
@@ -76,15 +76,45 @@ function draw_state(name) {
 }
 
 
+function find_closest_state(x, y) {
+
+    result = "";
+    min_distance = 100;
+
+    for (const state in state_centers) {
+        position = state_centers[state];
+        let q = transform_coordinates(position);
+        let d = dist(q[0], q[1], x, y);
+        if (d < min_distance) {
+            min_distance = d;
+            result = state;
+        }
+    }
+
+    if (min_distance < 50) 
+        return result;
+    else
+        return "";
+}
+
+
 function draw() {
 
-    background(0);
+    background(0, 0, 75);
     noFill();
 
     for (let state in state_data) {
         stroke(0);
         fill(state_colors[state]);
         draw_state(state);
+    }
+
+    let state = find_closest_state(mouseX, mouseY);
+    if (state) {
+        fill(0, 0, 100);
+        draw_state(state);
+        fill(0);
+        text(state, mouseX, mouseY);
     }
 }
 
