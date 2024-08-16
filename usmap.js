@@ -159,10 +159,11 @@ function draw() {
     }
 
     fill(0, 0, 0);
+    let x = 25;
     let y = height*.8;
     textAlign(LEFT);
-    text("n: state names", 25, y+=25);
-    text("c: election 2016 colors", 25, y+=25);
+    text("n: state names", x, y+=25);
+    text("c: election 2016 colors", x, y+=25);
 }
 
 
@@ -174,5 +175,22 @@ function keyPressed() {
         show_election_colors =!show_election_colors;
     }
 }
+
+
+function mousePressed() {
+    // temporary hack for mobile
+
+    let x = 25;
+    let y = height*.8;
+
+    if (x<mouseX && mouseX<x+150 && y<mouseY && mouseY<y+25)
+        show_state_names = !show_state_names;
+
+    y += 25;
+
+    if (x<mouseX && mouseX<x+150 && y<mouseY && mouseY<y+25)
+        show_election_colors =!show_election_colors;
+}
+
 
 
