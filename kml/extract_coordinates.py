@@ -22,18 +22,26 @@ root = doc.getroot()
 #    print(place.name)
 
 places = []
-for place in root.Document.Folder.Placemark:
+
+for placemark in root.Document.Folder.Placemark:
     #print(place.name)
-    data = {item.get("name"):item.text for item in
-            place.ExtendedData.SchemaData.SimpleData}
+    data_raw = {item.get("name"):item.text for item in
+                placemark.ExtendedData.SchemaData.SimpleData}
+
 
     # hack: Alaska has Placemark/MultiGeometry/Polygon
-    if "MultiGeometry" in dir(place):
-        coords = place.MultiGeometry.Polygon.outerBoundaryIs.LinearRing.coordinates.text.strip()
+    if "MultiGeometry" in dir(placemark):
+        coords = placemark.MultiGeometry.Polygon.outerBoundaryIs[-1].LinearRing.coordinates.text.strip()
     else:
-        coords = place.Polygon.outerBoundaryIs.LinearRing.coordinates.text.strip()
+        coords = placemark.Polygon.outerBoundaryIs[-1].LinearRing.coordinates.text.strip()
 
-    data["Coordinates"] = coords
+
+    data = { 
+        "name" : data_raw["NAME"], 
+        "coordinates" : coords
+    }
+    #print(data)
+
     places.append(data)
 
 
@@ -49,9 +57,8 @@ print("let state_data = {")
 
 
 for place in places:
-    #print(place['NAME'], place['Coordinates'])
-    print("     \'" + place['NAME'] + "\' : ", end='')
-    points_text = place['Coordinates'].split()
+    print("     \'" + place['name'] + "\' : ", end='')
+    points_text = place['coordinates'].split()
     points_ints = [vector_str_to_list(s) for s in points_text]
     print(points_ints, ',')
 
