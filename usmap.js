@@ -33,10 +33,10 @@ function initialize_state_colors_election() {
 
         if (clinton > trump) {
             hue = 210;
-            value = map(int(clinton/total * 100), 50, 60, 60, 100);
+            value = map(int(clinton/total * 100), 50, 60, 100, 70);
         } else {
             hue = 0;
-            value = map(int(trump/total * 100), 50, 60, 60, 100);
+            value = map(int(trump/total * 100), 50, 60, 100, 70);
         }
 
         state_colors_election[state] = color(hue, 100, value); 
